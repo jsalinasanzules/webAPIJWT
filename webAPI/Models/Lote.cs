@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace webAPI.Models;
 
@@ -21,5 +22,6 @@ public partial class Lote
 
     public string? Estado { get; set; }
 
+    [JsonIgnore]
     public virtual Producto Producto { get; set; } = null!;
 }

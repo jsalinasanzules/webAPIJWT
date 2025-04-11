@@ -50,7 +50,6 @@ public partial class DbUsuarioContext : DbContext
 
             entity.HasOne(d => d.Producto).WithMany(p => p.Lotes)
                 .HasForeignKey(d => d.ProductoId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Lotes_Producto");
         });
 

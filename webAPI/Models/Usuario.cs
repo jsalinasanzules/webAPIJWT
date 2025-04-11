@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace webAPI.Models;
 
@@ -15,6 +16,7 @@ public partial class Usuario
 
     public string? Username { get; set; }
 
+    [JsonIgnore]
     public string? Password { get; set; }
 
     public DateTime? FechaCreacion { get; set; }

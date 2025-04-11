@@ -44,17 +44,35 @@ namespace webAPI.Controllers
         [HttpPost("guardar")]
         public async Task<ActionResult<Usuario>> GuardarUsuario(Usuario usuario)
         {
-            usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
-           usuario.FechaCreacion = DateTime.Now;
-        _dbUsuarioContext.Usuarios.Add(usuario);
-            await _dbUsuarioContext.SaveChangesAsync();
-            return StatusCode(StatusCodes.Status201Created, usuario);
+            try
+            {
+                //validacion del token mediante cookies
+                var jwt = Request.Cookies["jwt"];
+                var token = _jwtservice.verify(jwt);
+
+                usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
+                usuario.FechaCreacion = DateTime.Now;
+                _dbUsuarioContext.Usuarios.Add(usuario);
+                await _dbUsuarioContext.SaveChangesAsync();
+                return StatusCode(StatusCodes.Status201Created, usuario);
+
+            }
+            catch (Exception _)
+            {
+                Log.Error("ERROR no autorizado");
+                return Unauthorized();
+            }
+            
         }
 
         [HttpPut("actualizar/{id}")]
         
         public async Task<ActionResult> ActualizarUsuario(int id, Usuario usuario)
         {
+            //validacion del token mediante cookies
+            var jwt = Request.Cookies["jwt"];
+            var token = _jwtservice.verify(jwt);
+
             var usuariolist = await _dbUsuarioContext.Usuarios.FindAsync(id);
             if(usuariolist == null)
             {
@@ -73,6 +91,12 @@ namespace webAPI.Controllers
         [HttpDelete("eliminar/{id}")]
         public async Task<ActionResult> EliminarUsuario(int id)
         {
+
+            //validacion del token mediante cookies
+            var jwt = Request.Cookies["jwt"];
+            var token = _jwtservice.verify(jwt);
+
+
             var usuariolist = await _dbUsuarioContext.Usuarios.FindAsync(id);
             if (usuariolist == null)
             {

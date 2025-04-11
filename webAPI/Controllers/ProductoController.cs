@@ -26,10 +26,7 @@ namespace webAPI.Controllers
         {
             try
             {
-                //validacion del token mediante cookies
-                //var jwt = Request.Cookies["jwt"];
-                //var token = _jwtservice.verify(jwt);
-
+                
                 producto.FechaCreacion = DateTime.Now;
                 _context.Productos.Add(producto);
 
@@ -51,11 +48,10 @@ namespace webAPI.Controllers
         {
             try
             {
-                //validacion del token mediante cookies
-                //var jwt = Request.Cookies["jwt"];
-                //var token = _jwtservice.verify(jwt);
+                
 
-                var productos = await _context.Productos.ToListAsync();
+                var productos = await _context.Productos.Include(i=> i.Lotes ).Where(x => x.Estado == "A").ToListAsync();
+                
 
                 return Ok(productos);
 
@@ -67,6 +63,28 @@ namespace webAPI.Controllers
             }
 
         }
+
+        [HttpGet("listarlotes")]
+        public async Task<ActionResult<IEnumerable<Lote>>> ListarLotes()
+        {
+            try
+            {
+
+
+                var lotes = await _context.Lotes.Include(p => p.Producto).ToListAsync();
+
+
+                return Ok(lotes);
+
+            }
+            catch (Exception _)
+            {
+                Log.Error("ERROR no autorizado");
+                return Unauthorized();
+            }
+
+        }
+
 
         [HttpDelete("eliminar/{id}")]
         public async Task<ActionResult> EliminarProducto(int id)
@@ -114,5 +132,8 @@ namespace webAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(productoencontrado);
         }
+
+        
+
     }
 }
